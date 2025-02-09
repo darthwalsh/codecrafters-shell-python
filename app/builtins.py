@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import sys
 
@@ -23,3 +24,14 @@ def type(name, *_):
 
 def pwd(*_):
     print(Path.cwd())
+
+
+def cd(*args):
+    if not args:
+        raise NotImplementedError("cd without arguments goes home")
+
+    dir = args[0]
+    try:
+        os.chdir(dir)
+    except FileNotFoundError:
+        print(f"cd: {dir}: No such file or directory")
