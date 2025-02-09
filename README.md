@@ -18,6 +18,9 @@ REPLs, builtin commands, and more.
 - `cd` with no args goes to `$HOME`
 - all input (including command) expands `~` to `$HOME`
 
+## Bugs
+- quoted arg `"~"` shouldn't be expanded
+
 ## Unsure questions
 How should `type` function:
 - directories -- i.e. `bash: type: /: not found`
