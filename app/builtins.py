@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 
 from app import path
@@ -18,3 +19,7 @@ def type(name, *_):
         print(f"{name} is {resolved}")
     else:
         print(f"{name}: not found")
+
+
+def pwd(*_):
+    print(Path.cwd())
