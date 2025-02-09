@@ -15,20 +15,32 @@ def expand_home(arg):
 def quote_split(line: str):
     # See https://www.gnu.org/software/bash/manual/bash.html#Quoting for details
     pattern = r"""
-(?<!\\)'    # quote not preceded by a backslash
-  ([^']*)   # repeated non-quote
-'           # closing quote
-    |
-(?<!\\)"    # double-quote not preceded by a backslash
-  (
-    (?:\\"  # escaped double-quote
+(\s*)         # preceding whitespace
+(?:
+  (?<!\\)'    # quote not preceded by a backslash
+    ([^']*)   # repeated non-quote
+  '           # closing quote
       |
-    [^"])   # non-quote
-    *       # repeated non-quote
+  (?<!\\)"    # double-quote not preceded by a backslash
+    (
+      (?:\\"  # escaped double-quote
+        |
+      [^"])   # non-quote
+      *       # repeated non-quote
+    )
+  "           # closing double-quote
+      |
+  (           # PLAIN segment
+    (?:
+      (?:     # either \. or any non-quote non-whitespace
+        \\.    # escaped anything
+        |
+        (?!['"])# Not a quote
+        \S      # plain text
+      )
+    )+        # repeated (not really necessary, but avoid looping below)
   )
-"           # closing double-quote
-    |
-(\S+)       # plain text
+)
 """
 
     def escape(single, double, plain):
@@ -43,8 +55,14 @@ def quote_split(line: str):
             return re.sub(r"\\(.)", replace, double)
         return re.sub(r"\\(.)", r"\1", plain)
 
-    # print(re.findall(pattern, line, re.VERBOSE))
-    return [escape(*groups) for groups in re.findall(pattern, line, re.VERBOSE)]
+    args = []
+    for spaces, single, double, plain in re.findall(pattern, line, re.VERBOSE):
+        content = escape(single, double, plain)
+        if spaces or not args:
+            args.append(content)
+        else:
+            args[-1] += content
+    return args
 
 
 def repl():

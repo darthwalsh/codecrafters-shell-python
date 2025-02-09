@@ -36,9 +36,11 @@ double "\\'escaped"
 double "\\\\escaped"
 double "\\" backslash"
 non-special\\t escape
+'script     test' 'hello''example'
+"double"plain'single'
+plain"double"'single'
+'single'plain"double"
 """.strip().splitlines()
-
-# BUG parses `"ab"c`` to two args
 
 
 class TestQuoteSplit(HaltingTestCase):
