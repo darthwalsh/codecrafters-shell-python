@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Joins CLI arguments with |"""
+
+import sys
+
+print(*sys.argv[1:], sep="|", end="")
