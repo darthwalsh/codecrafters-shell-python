@@ -1,18 +1,25 @@
+import subprocess
 import sys
 
-from app import builtins
+from app import builtins, path
 
 
 def repl():
     while True:
         sys.stdout.write("$ ")
-        command, *args = input().split()
+        try:
+            line = input()
+        except EOFError:
+            return
+        command, *args = split = line.split()
 
-        def command_not_found(*_):
+        if f := getattr(builtins, command, None):
+            f(*args)
+        elif path.resolve(command):
+            # Don't use resolved path here, as $0 shouldn't be full path for entry in PATH
+            subprocess.call(split)
+        else:
             print(f"{command}: command not found")
-
-        f = getattr(builtins, command, command_not_found)
-        f(*args)
 
 
 def main():
