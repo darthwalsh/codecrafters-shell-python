@@ -28,7 +28,7 @@ def pwd(*_):
 
 def cd(*args):
     if not args:
-        raise NotImplementedError("cd without arguments goes home")
+        args = [os.environ["HOME"]]
 
     dir = args[0]
     try:

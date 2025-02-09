@@ -13,3 +13,12 @@ REPLs, builtin commands, and more.
 1. Ensure you have `python (3.11)` installed locally
 1. Run `./your_program.sh` to run your program, which is implemented in
    `app/main.py`.
+
+## Extra functionality
+- `cd` with no args goes to `$HOME`
+- all input (including command) expands `~` to `$HOME`
+
+## Unsure questions
+How should `type` function:
+- directories -- i.e. `bash: type: /: not found`
+- files without executable bit set: i.e. `envvars is /usr/sbin/envvars` but permission is `-rw-r--r--`
