@@ -1,5 +1,6 @@
 import sys
 
+
 def repl():
     while True:
         sys.stdout.write("$ ")
@@ -7,6 +8,8 @@ def repl():
         match command:
             case "exit":
                 sys.exit(int(args[0]))
+            case "echo":
+                print(" ".join(args))
             case _:
                 print(f"{command}: command not found")
 
