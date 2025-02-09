@@ -1,12 +1,15 @@
 import sys
 
 
-def main():
-    sys.stdout.write("$ ")
+def repl():
+    while True:
+        sys.stdout.write("$ ")
+        command = input()
+        print(f"{command}: command not found")
 
-    command = input()
-    print(f"{command}: command not found")
-    exit(1)
+
+def main():
+    repl()
 
 
 if __name__ == "__main__":
