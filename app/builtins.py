@@ -5,6 +5,9 @@ import sys
 from app import path
 
 
+# See https://www.gnu.org/software/bash/manual/bash.html#Bourne-Shell-Builtins
+
+
 def exit(code, *_):
     sys.exit(int(code))
 

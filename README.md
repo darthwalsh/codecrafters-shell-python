@@ -19,7 +19,7 @@ REPLs, builtin commands, and more.
 - all input (including command) expands `~` to `$HOME`
 
 ## Bugs
-- quoted arg `"~"` shouldn't be expanded
+Grammar has many edge case, see [POSIX Shell Grammar to potential improvement](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02)
 
 ## Unsure questions
 How should `type` function:

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import os
 import re
 import subprocess
@@ -6,14 +7,42 @@ import sys
 from app import builtins, path
 
 
-def expand_home(arg):
-    if arg.startswith("~"):
-        return os.environ["HOME"] + arg[1:]
-    return arg
+def repl():
+    # https://www.gnu.org/software/bash/manual/bash.html#Shell-Operation
+    while True:
+        sys.stdout.write("$ ")
+        try:
+            line = input()
+        except EOFError:
+            return
+
+        command, *args = [expand(arg) for arg in quote_split(line)]
+
+        if f := getattr(builtins, command, None):
+            f(*args)
+        elif path.resolve(command):
+            # Don't use resolved path here, as $0 shouldn't be full path for entry in PATH
+            subprocess.call([command, *args])
+        else:
+            print(f"{command}: command not found")
 
 
-def quote_split(line: str):
-    # See https://www.gnu.org/software/bash/manual/bash.html#Quoting for details
+@dataclass
+class Token:
+    text: str
+    quoted: bool
+
+    @staticmethod
+    def plain(text: str) -> "Token":
+        return Token(text, False)
+
+    @staticmethod
+    def quote(text: str) -> "Token":
+        return Token(text, True)
+
+
+def quote_split(line: str) -> list[Token]:
+    # https://www.gnu.org/software/bash/manual/bash.html#Quoting
     pattern = r"""
 (\s*)         # preceding whitespace
 (?:
@@ -43,45 +72,49 @@ def quote_split(line: str):
 )
 """
 
-    def escape(single, double, plain):
+    def escape(single, double, plain) -> Token:
         if single:
-            return single
+            return Token.quote(single)
+
         if double:
+
             def replace(match):
                 c = match.group(1)
                 if c in '$`"\\':
                     return c
                 return match.group(0)
-            return re.sub(r"\\(.)", replace, double)
-        return re.sub(r"\\(.)", r"\1", plain)
 
-    args = []
+            return Token.quote(re.sub(r"\\(.)", replace, double))
+        return Token.plain(re.sub(r"\\(.)", r"\1", plain))
+
+    args: list[Token] = []
     for spaces, single, double, plain in re.findall(pattern, line, re.VERBOSE):
         content = escape(single, double, plain)
         if spaces or not args:
             args.append(content)
         else:
-            args[-1] += content
+            args[-1].text += content.text
     return args
 
 
-def repl():
-    while True:
-        sys.stdout.write("$ ")
-        try:
-            line = input()
-        except EOFError:
-            return
+def expand(arg: Token) -> str:
+    text = arg.text
+    # https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions
+    # NOT_IMPLEMENTED: brace expansion
+    if arg.quoted:
+        text = expand_home(text)
+    # NOT_IMPLEMENTED: parameter and variable expansion
+    # NOT_IMPLEMENTED: command substitution
+    # NOT_IMPLEMENTED: arithmetic expansion
+    # NOT_IMPLEMENTED: word splitting
+    # NOT_IMPLEMENTED: filename expansion
+    return text
 
-        command, *args = [expand_home(arg) for arg in quote_split(line)]
 
-        if f := getattr(builtins, command, None):
-            f(*args)
-        elif path.resolve(command):
-            # Don't use resolved path here, as $0 shouldn't be full path for entry in PATH
-            subprocess.call([command, *args])
-        else:
-            print(f"{command}: command not found")
+def expand_home(arg: str):
+    if arg.startswith("~"):
+        return os.environ["HOME"] + arg[1:]
+    return arg
 
 
 def main():

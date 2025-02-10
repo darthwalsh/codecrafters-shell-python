@@ -48,7 +48,7 @@ class TestQuoteSplit(HaltingTestCase):
         for case in CASES:
             with self.subTest(line=case):
                 print(case)
-                actual = "|".join(quote_split(case))
+                actual = "|".join(t.text for t in quote_split(case))
                 self.assertEqual(actual, get_expected(case))
 
 
