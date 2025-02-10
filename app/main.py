@@ -3,8 +3,10 @@ import os
 import re
 import subprocess
 import sys
+from typing import Self
 
 from app import builtins, path
+from app.command import Command
 
 
 def repl():
@@ -16,15 +18,18 @@ def repl():
         except EOFError:
             return
 
-        command, *args = [expand(arg) for arg in quote_split(line)]
+        expanded = [expand(arg) for arg in quote_split(line)]
+        cmd = Command.parse(expanded)
 
-        if f := getattr(builtins, command, None):
-            f(*args)
-        elif path.resolve(command):
-            # Don't use resolved path here, as $0 shouldn't be full path for entry in PATH
-            subprocess.call([command, *args])
-        else:
-            print(f"{command}: command not found")
+        with cmd.redirect():
+            """Set up redirects before calling any builtins"""
+            if f := getattr(builtins, cmd.command, None):
+                f(*cmd.args)
+            elif path.resolve(cmd.command):
+                # Don't use resolved path here, as $0 shouldn't be full path for entry in PATH
+                subprocess.call([cmd.command, *cmd.args])
+            else:
+                print(f"{cmd.command}: command not found")
 
 
 @dataclass
@@ -33,11 +38,11 @@ class Token:
     quoted: bool
 
     @staticmethod
-    def plain(text: str) -> "Token":
+    def plain(text: str) -> Self:
         return Token(text, False)
 
     @staticmethod
-    def quote(text: str) -> "Token":
+    def quote(text: str) -> Self:
         return Token(text, True)
 
 
