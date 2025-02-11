@@ -106,7 +106,7 @@ def expand(arg: Token) -> str:
     text = arg.text
     # https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions
     # NOT_IMPLEMENTED: brace expansion
-    if arg.quoted:
+    if not arg.quoted:
         text = expand_home(text)
     # NOT_IMPLEMENTED: parameter and variable expansion
     # NOT_IMPLEMENTED: command substitution
