@@ -21,8 +21,8 @@ def complete(text, state):
         if " " in line_buffer:
             raise NotImplementedError("tab completion on args not supported")
 
-        cached_completions[:] = list(find_executable(text))
-        cached_completions.extend(f for f in dir(builtins) if f.startswith(text))
+        commands = set(find_executable(text)) | {f for f in dir(builtins) if f.startswith(text)}
+        cached_completions[:] = [c + " " for c in sorted(commands)]
 
         return cached_completions[0] if cached_completions else None
     except Exception as e:
