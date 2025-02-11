@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 
 
-def find_executable(prefix):
+def find_executables(prefix):
     for path in os.environ["PATH"].split(":"):
         path = Path(path)
         if not path.is_dir():

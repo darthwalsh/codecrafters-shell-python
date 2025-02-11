@@ -7,13 +7,6 @@ from app.main import quote_split
 splitter = Path(__file__).parent / "splitter"
 
 
-class HaltingTestCase(unittest.TestCase):
-    def run(self, result=None):
-        """Stop after first error"""
-        if not result.errors:
-            super(HaltingTestCase, self).run(result)
-
-
 def get_expected(args):
     """Use the real shell to see how args are joined"""
     # If this raises, then the test is invalid
@@ -43,11 +36,10 @@ plain"double"'single'
 """.strip().splitlines()
 
 
-class TestQuoteSplit(HaltingTestCase):
+class TestQuoteSplit(unittest.TestCase):
     def test_cases(self):
         for case in CASES:
             with self.subTest(line=case):
-                print(case)
                 actual = "|".join(t.text for t in quote_split(case))
                 self.assertEqual(actual, get_expected(case))
 

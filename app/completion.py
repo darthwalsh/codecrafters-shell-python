@@ -1,6 +1,6 @@
 import readline
 
-from app.path import find_executable
+from app.path import find_executables
 from app import builtins
 
 cached_completions = []
@@ -21,7 +21,7 @@ def complete(text, state):
         if " " in line_buffer:
             raise NotImplementedError("tab completion on args not supported")
 
-        commands = set(find_executable(text)) | {f for f in dir(builtins) if f.startswith(text)}
+        commands = set(find_executables(text)) | {f for f in dir(builtins) if f.startswith(text)}
         if len(commands) == 1:
             commands = [c + " " for c in commands]
         cached_completions[:] = commands
@@ -59,7 +59,7 @@ def init_readline(prompt):
     readline.set_completer_delims(" \t\n;")
 
     # Tricky https://stackoverflow.com/a/8072282/771768
-    # Check if using libedit or GNU Readline
+    # macOS could have either libedit or GNU Readline
     if "libedit" in readline.__doc__:
         # Warning: libedit does not support some GNU readline features
         # https://pewpewthespells.com/blog/osx_readline.html
