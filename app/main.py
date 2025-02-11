@@ -7,6 +7,7 @@ from typing import Self
 
 from app import builtins, path
 from app.command import Command
+from app.completion import init_readline, raise_for_completion_error
 
 
 def repl():
@@ -17,6 +18,11 @@ def repl():
             line = input()
         except EOFError:
             return
+        raise_for_completion_error()
+        
+        if not line.strip():
+            continue
+
 
         expanded = [expand(arg) for arg in quote_split(line)]
         cmd = Command.parse(expanded)
@@ -123,6 +129,7 @@ def expand_home(arg: str):
 
 
 def main():
+    init_readline()
     repl()
 
 

@@ -21,6 +21,11 @@ REPLs, builtin commands, and more.
 ## Bugs
 Grammar has many edge case, see [POSIX Shell Grammar to potential improvement](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02)
 
+Multiple completions doesn't re-print hte prompt
+Completions don't support arguments
+
+Depends on readline which is not supported on windows. Workaround: https://stackoverflow.com/a/51964654/771768
+
 ## Unsure questions
 How should `type` function:
 - directories -- i.e. `bash: type: /: not found`

@@ -4,6 +4,8 @@ import sys
 
 from app import path
 
+# HACK any global variable in builtins will be found, but i.e. sys should't be
+
 
 # See https://www.gnu.org/software/bash/manual/bash.html#Bourne-Shell-Builtins
 
