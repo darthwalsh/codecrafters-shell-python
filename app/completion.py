@@ -22,9 +22,21 @@ def complete(text, state):
             raise NotImplementedError("tab completion on args not supported")
 
         commands = set(find_executable(text)) | {f for f in dir(builtins) if f.startswith(text)}
-        cached_completions[:] = [c + " " for c in sorted(commands)]
+        if len(commands) == 1:
+            commands = [c + " " for c in commands]
+        cached_completions[:] = commands
 
         return cached_completions[0] if cached_completions else None
+    except Exception as e:
+        global error_in_completion
+        error_in_completion = e
+
+
+def match_display_hook(_substitution, matches, _longest_match_length):
+    try:
+        print()
+        print(*matches, sep="  ")
+        print(PROMPT + readline.get_line_buffer(), end="")
     except Exception as e:
         global error_in_completion
         error_in_completion = e
@@ -36,19 +48,23 @@ def raise_for_completion_error():
         raise error_in_completion
 
 
-def init_readline():
+def init_readline(prompt):
     """Initialize readline with custom settings."""
+    global PROMPT
+    PROMPT = prompt
 
-    # Set the completer function
     readline.set_completer(complete)
+    readline.set_completion_display_matches_hook(match_display_hook)
 
-    # Set the delimiter characters
     readline.set_completer_delims(" \t\n;")
 
     # Tricky https://stackoverflow.com/a/8072282/771768
     # Check if using libedit or GNU Readline
     if "libedit" in readline.__doc__:
-        readline.parse_and_bind("bind -e")
-        readline.parse_and_bind("bind '\t' rl_complete")
+        # Warning: libedit does not support some GNU readline features
+        # https://pewpewthespells.com/blog/osx_readline.html
+        # readline.parse_and_bind("bind -e")
+        # readline.parse_and_bind("bind '\t' rl_complete")
+        raise RuntimeError("libedit readline not supported, use GNU readline")
     else:
         readline.parse_and_bind("tab: complete")

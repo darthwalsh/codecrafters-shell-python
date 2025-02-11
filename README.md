@@ -21,8 +21,8 @@ REPLs, builtin commands, and more.
 ## Bugs
 Grammar has many edge case, see [POSIX Shell Grammar to potential improvement](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02)
 
-Multiple completions doesn't re-print hte prompt
-Completions don't support arguments
+Completions don't support arguments.
+Executable completion doesn't support relative path prefix, e.g. `./your_<TAB>`
 
 Depends on readline which is not supported on windows. Workaround: https://stackoverflow.com/a/51964654/771768
 
@@ -30,6 +30,8 @@ Depends on readline which is not supported on windows. Workaround: https://stack
 How should `type` function:
 - directories -- i.e. `bash: type: /: not found`
 - files without executable bit set: i.e. `envvars is /usr/sbin/envvars` but permission is `-rw-r--r--`
+
+The code never flushes the stdout buffer, but relies on python being run with `-u` unbuffered flag.
 
 ## Running tests
 ```bash

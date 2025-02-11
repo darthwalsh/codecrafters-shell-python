@@ -10,10 +10,13 @@ from app.command import Command
 from app.completion import init_readline, raise_for_completion_error
 
 
+PROMPT = "$ "
+
+
 def repl():
     # https://www.gnu.org/software/bash/manual/bash.html#Shell-Operation
     while True:
-        sys.stdout.write("$ ")
+        print(end=PROMPT)
         try:
             line = input()
         except EOFError:
@@ -129,7 +132,7 @@ def expand_home(arg: str):
 
 
 def main():
-    init_readline()
+    init_readline(PROMPT)
     repl()
 
 
