@@ -25,3 +25,8 @@ Grammar has many edge case, see [POSIX Shell Grammar to potential improvement](h
 How should `type` function:
 - directories -- i.e. `bash: type: /: not found`
 - files without executable bit set: i.e. `envvars is /usr/sbin/envvars` but permission is `-rw-r--r--`
+
+## Running tests
+```bash
+python -m unittest
+```
