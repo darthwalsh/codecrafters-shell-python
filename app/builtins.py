@@ -10,7 +10,7 @@ from app import path
 # See https://www.gnu.org/software/bash/manual/bash.html#Bourne-Shell-Builtins
 
 
-def exit(code, *_):
+def exit(code=0, *_):
     sys.exit(int(code))
 
 
