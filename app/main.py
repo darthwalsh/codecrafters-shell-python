@@ -31,7 +31,7 @@ def repl():
         cmd = Command.parse(expanded)
 
         with cmd.redirect():
-            """Set up redirects before calling any builtins"""
+            # Set up redirects before calling any builtins
             if f := getattr(builtins, cmd.command, None):
                 f(*cmd.args)
             elif path.resolve(cmd.command):
@@ -63,7 +63,7 @@ def quote_split(line: str) -> list[Token]:
   (?<!\\)'    # quote not preceded by a backslash
     ([^']*)   # repeated non-quote
   '           # closing quote
-      |
+    |
   (?<!\\)"    # double-quote not preceded by a backslash
     (
       (?:\\"  # escaped double-quote
@@ -72,7 +72,7 @@ def quote_split(line: str) -> list[Token]:
       *       # repeated non-quote
     )
   "           # closing double-quote
-      |
+    |
   (           # PLAIN segment
     (?:
       (?:     # either \. or any non-quote non-whitespace
